@@ -8,6 +8,10 @@ local.properties
 # Log/OS Files
 *.log
 
+bun.lock
+
+package-lock.json
+
 # Android Studio generated files and folders
 captures/
 .externalNativeBuild/
