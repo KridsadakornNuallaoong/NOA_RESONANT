@@ -4,10 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-<<<<<<< HEAD
-=======
 	"regexp"
->>>>>>> Final_BN
 
 	"GOLANG_SERVER/components/db"
 	"GOLANG_SERVER/components/schema"
@@ -15,8 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-<<<<<<< HEAD
-=======
 // ValidateEmail checks if the email format is valid
 func ValidateEmail(email string) bool {
 	// Regular expression for validating email format
@@ -39,7 +34,6 @@ func ValidatePassword(password string) bool {
 	return hasLetter && hasDigit
 }
 
->>>>>>> Final_BN
 // Register handles user registration
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost { // Allow only POST requests
@@ -57,13 +51,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle both lowercase and uppercase keys
-<<<<<<< HEAD
-=======
 	username := userDetails["username"]
 	if username == "" {
 		username = userDetails["Username"]
 	}
->>>>>>> Final_BN
 	email := userDetails["email"]
 	if email == "" {
 		email = userDetails["Email"]
@@ -73,10 +64,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		password = userDetails["Password"]
 	}
 
-<<<<<<< HEAD
-	// Declare otp variable outside the if block
-	var otp string
-=======
 	if !ValidateEmail(email) {
 		http.Error(w, "Invalid email format", http.StatusBadRequest)
 		return
@@ -86,7 +73,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Password must be at least 8 characters long and contain at least one letter and one number", http.StatusBadRequest)
 		return
 	}
->>>>>>> Final_BN
 
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -96,24 +82,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Convert the user details to a User struct
-<<<<<<< HEAD
-	user := schema.User{
-		Email:    email,
-		Password: string(hashedPassword),
-	}
-
-	// Save user details to database
-	if _, err := db.StoreUser(user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else {
-		log.Println("User registered successfully.")
-		// Generate OTP and assign it to the otp variable
-		otp = GenerateOTP()
-		SendOTPEmail(email, otp)
-		// Save the OTP in the database
-		SaveOTP(email, otp)
-=======
 	// user := schema.User{
 	//     Username: username,
 	//     Email:    email,
@@ -131,20 +99,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		log.Println("Email registered successfully.")
->>>>>>> Final_BN
 	}
 
 	// Send a response
 	response := map[string]string{
-<<<<<<< HEAD
-		"message": "User registered successfully. Please check your email for the OTP.",
-		"otp":     otp,
-=======
 		"message":  "User registered successfully. Please check your email for the OTP.",
 		"username": username,
 		"email":    email,
 		"password": string(hashedPassword),
->>>>>>> Final_BN
 	}
 	log.Println("User registered successfully.")
 	w.WriteHeader(http.StatusOK)
@@ -153,8 +115,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-<<<<<<< HEAD
-=======
 
 // function StoreUser to database after verifying the OTP
 func StoreUser(username string, email string, password string) error {
@@ -182,4 +142,3 @@ func StoreUser(username string, email string, password string) error {
 	return nil
 
 }
->>>>>>> Final_BN

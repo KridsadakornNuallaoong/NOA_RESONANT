@@ -4,17 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-<<<<<<< HEAD
-
-	"GOLANG_SERVER/components/db"
-
-=======
 	"time"
 
 	"GOLANG_SERVER/components/db"
 
 	"github.com/golang-jwt/jwt"
->>>>>>> Final_BN
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -58,10 +52,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-<<<<<<< HEAD
-	// Send a response
-	response := map[string]string{"message": "Login successful"}
-=======
 	log.Println("User logged in successfully:", user.Username, user.ID)
 
 	// Generate a JWT token
@@ -80,15 +70,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"message": "Login successful",
 		"token":   token,
 	}
->>>>>>> Final_BN
 	log.Println("User logged in successfully.")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-<<<<<<< HEAD
-=======
 
 }
 
@@ -114,5 +101,4 @@ func GenerateJWT(username, userID string) (string, error) {
 	}
 
 	return signedToken, nil
->>>>>>> Final_BN
 }

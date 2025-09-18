@@ -1,5 +1,5 @@
 # Stage 1: Build Go Binary
-FROM golang:1.23.5-alpine AS builder
+FROM golang:1.24.0-alpine AS builder
 WORKDIR /app
 
 # Copy go.mod and download dependencies
@@ -26,7 +26,16 @@ COPY --from=builder /app/main .
 EXPOSE 8000
 
 # Set environment variable
-ENV PORT=8000
+ENV PORT=8000 
+ENV GO_ENV=Prod
+ENV MESSAGE="Lunch in production."
+ENV MONGO_URI=mongodb+srv://phuminton:Natsu17102003@gyro.czoey.mongodb.net/
+ENV MONGO_DB=GyroDB
+ENV MONGO_COLLECTION=data
+ENV MONGO_DEVICECOLLECTION=devices
+ENV MONGO_USERCOLLECTION=user
+ENV MONGO_AUTHCOLLECTION=auth
+ENV MQTT_BROKER=mqtt://localhost:1883
 
 # Run the application
 CMD ["./main"]

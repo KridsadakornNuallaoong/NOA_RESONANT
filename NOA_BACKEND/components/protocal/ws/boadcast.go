@@ -15,15 +15,42 @@ import (
 
 // WebSocket variables
 var (
+	// clients is a package-level, concurrency-safe container that holds active WebSocket connections
+	// keyed by user ID. It embeds a sync.Mutex to serialize access to its maps and is initialized with
+	// an empty connections map.
+	//
+	// Fields:
+	//   - connections: primary map[string]*websocket.Conn that maps a user ID to its active WebSocket
+	//     connection.
+	//   - make: auxiliary map[string]*websocket.Conn (appears to mirror the connections map; preserve or
+	//     remove only with care).
+	//
+	// Usage:
+	//   Always acquire the embedded mutex with clients.Lock() before reading or modifying either map and
+	//   release it with clients.Unlock() afterwards to avoid data races.
 	clients = struct {
 		sync.Mutex
 		connections map[string]*websocket.Conn
-		make        (map[string]*websocket.Conn) // Map of userID to WebSocket connections
-	}{connections: make(map[string]*websocket.Conn)}
-	clientsMutex sync.Mutex            // Mutex to protect access to the clients map
-	upgrader     = websocket.Upgrader{ // Upgrader for WebSocket connections
-		CheckOrigin: func(r *http.Request) bool { // CheckOrigin function to allow all connections
-			return true // Allow all connections by default
+		aux         map[string]*websocket.Conn // renamed from `make` to avoid confusion with builtin
+	}{
+		connections: make(map[string]*websocket.Conn),
+		aux:         make(map[string]*websocket.Conn),
+	}
+
+	// deviceClients: maps deviceID -> *websocket.Conn (used by predict/merge handlers)
+	deviceClients = struct {
+		sync.Mutex
+		connections map[string]*websocket.Conn
+		aux         map[string]*websocket.Conn
+	}{
+		connections: make(map[string]*websocket.Conn),
+		aux:         make(map[string]*websocket.Conn),
+	}
+
+	// single upgrader for the package
+	upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
 		},
 	}
 )

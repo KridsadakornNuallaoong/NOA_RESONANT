@@ -25,10 +25,7 @@ func FindUser(email string) (schema.User, error) {
 	// Use options.FindOne() to set the projection
 	findOptions := options.FindOne().SetProjection(projection)
 
-<<<<<<< HEAD
-=======
 	// Find the user by email
->>>>>>> Final_BN
 	err := collection.FindOne(ctx, filter, findOptions).Decode(&result)
 	if err != nil {
 		return schema.User{}, err

@@ -12,7 +12,7 @@ import (
 )
 
 const MQTT_TOPIC = "your/mqtt/topic"
-const FrameSize = 50 // Define the size of the sliding frame
+const MergeFrameSize = 50 // Define the size of the sliding frame
 
 var (
 	clientMerge = make(map[*websocket.Conn]string) // Map of clients with identifiers
@@ -20,8 +20,8 @@ var (
 )
 
 func SendToSpecificClients(data []float64, targetID string) {
-	clientsMutex.Lock()
-	defer clientsMutex.Unlock()
+	frameMutex.Lock()
+	defer frameMutex.Unlock()
 
 	for client, clientID := range clientMerge {
 		if clientID == targetID { // Send data to specific client with matching ID
@@ -44,20 +44,21 @@ func HandleWebSocketMerge(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	clientsMutex.Lock()
+	// use frameMutex (declared above) to protect clientMerge
+	frameMutex.Lock()
 	clientMerge[conn] = "client1" // Assign a unique identifier to the client
-	clientsMutex.Unlock()
+	frameMutex.Unlock()
 
 	defer func() {
-		clientsMutex.Lock()
+		frameMutex.Lock()
 		delete(clientMerge, conn)
-		clientsMutex.Unlock()
+		frameMutex.Unlock()
 	}()
 
 	// Create unique frames for this WebSocket connection
-	frameX := make([]float64, FrameSize)
-	frameY := make([]float64, FrameSize)
-	frameZ := make([]float64, FrameSize)
+	frameX := make([]float64, MergeFrameSize)
+	frameY := make([]float64, MergeFrameSize)
+	frameZ := make([]float64, MergeFrameSize)
 
 	// Create a unique channel to receive data for this WebSocket connection
 	dataChan := make(chan []byte)
@@ -93,8 +94,8 @@ func updateFrames(frameX, frameY, frameZ []float64, data schema.MQTTData) {
 	copy(frameY, frameY[1:])
 	copy(frameZ, frameZ[1:])
 
-	// Append the new acceleration values to the end of the frames
-	frameX[FrameSize-1] = data.X.Acceleration
-	frameY[FrameSize-1] = data.Y.Acceleration
-	frameZ[FrameSize-1] = data.Z.Acceleration
+	// Append the new acceleration values to the end of the frames (cast from float32 -> float64)
+	frameX[MergeFrameSize-1] = float64(data.X.Acceleration)
+	frameY[MergeFrameSize-1] = float64(data.Y.Acceleration)
+	frameZ[MergeFrameSize-1] = float64(data.Z.Acceleration)
 }

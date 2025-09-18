@@ -8,11 +8,7 @@ import (
 // SendOTP sends an OTP to the user's email and returns the OTP
 func SendOTP(w http.ResponseWriter, r *http.Request) {
 
-<<<<<<< HEAD
-	if r.Method != http.MethodGet { // Allow only POST requests
-=======
 	if r.Method != http.MethodPost { // Allow only POST requests
->>>>>>> Final_BN
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}

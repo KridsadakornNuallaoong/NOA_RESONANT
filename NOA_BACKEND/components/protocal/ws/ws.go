@@ -16,9 +16,15 @@ var client mqtt.Client // MQTT client
 
 // WebSocket variables
 var (
-	clients      = make(map[*websocket.Conn]bool) // Connected WebSocket clients
-	clientsMutex = sync.Mutex{}                   // Mutex to protect the clients map
-	upgrader     = websocket.Upgrader{            // Upgrader for WebSocket connections
+	// renamed from `clients` to `broadcastClients` to avoid redeclaration
+	broadcastClients = struct {
+		sync.Mutex
+		conns map[*websocket.Conn]bool
+	}{
+		conns: make(map[*websocket.Conn]bool),
+	}
+
+	wsUpgrader = websocket.Upgrader{ // renamed upgrader -> wsUpgrader
 		CheckOrigin: func(r *http.Request) bool { // CheckOrigin function to allow all connections
 			return true // Allow all connections by default
 		},
@@ -28,7 +34,7 @@ var (
 // WebSocket Multi cliend handler
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the HTTP connection to a WebSocket connection
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Error upgrading connection to WebSocket:", err)
 		return
@@ -43,9 +49,9 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Add the client to the clients map
-	clientsMutex.Lock()
-	clients[conn] = true
-	clientsMutex.Unlock()
+	broadcastClients.Lock()
+	broadcastClients.conns[conn] = true
+	broadcastClients.Unlock()
 
 	// Log the new connection
 	log.Println("New WebSocket client connected.")
@@ -69,18 +75,18 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 // Broadcast message to all WebSocket clients
 func broadcastMessage(data []byte) {
 	// Iterate over all clients
-	clientsMutex.Lock()
-	for conn := range clients {
+	broadcastClients.Lock()
+	for conn := range broadcastClients.conns {
 
 		// Process the message and store it in the database
 		// Write the message to the client
 		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
 			log.Println("Error writing message to WebSocket client:", err)
 			conn.Close()
-			delete(clients, conn)
+			delete(broadcastClients.conns, conn)
 		}
 	}
-	clientsMutex.Unlock()
+	broadcastClients.Unlock()
 }
 
 func SubscribeMQTTTopic(dataChan chan<- []byte) {
@@ -112,7 +118,7 @@ func SubscribeMQTTTopic(dataChan chan<- []byte) {
 
 func HandleWsTest(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the HTTP connection to a WebSocket connection
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Error upgrading connection to WebSocket:", err)
 		return

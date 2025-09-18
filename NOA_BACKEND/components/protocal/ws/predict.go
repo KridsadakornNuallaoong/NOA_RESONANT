@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const FrameSize = 200
+const PredictFrameSize = 200
 
 type SlidingWindow struct {
 	X []float32
@@ -118,9 +118,9 @@ func updateSlidingWindow(deviceID string, data schema.GyroDataDetail) (bool, *Sl
 	f, exists := deviceFrames.frames[deviceID]
 	if !exists {
 		f = &SlidingWindow{
-			X: make([]float32, FrameSize),
-			Y: make([]float32, FrameSize),
-			Z: make([]float32, FrameSize),
+			X: make([]float32, PredictFrameSize),
+			Y: make([]float32, PredictFrameSize),
+			Z: make([]float32, PredictFrameSize),
 		}
 		deviceFrames.frames[deviceID] = f
 	}
