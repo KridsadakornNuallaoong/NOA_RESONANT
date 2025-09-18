@@ -3,10 +3,6 @@ package db
 import (
 	"context"
 	"errors"
-<<<<<<< HEAD
-=======
-	"log"
->>>>>>> Final_BN
 	"time"
 
 	env "GOLANG_SERVER/components/env"
@@ -23,50 +19,35 @@ func StoreUser(user schema.User) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)                             // Create a context with timeout
 	defer cancel()                                                                                       // Defer cancel the context
 
-<<<<<<< HEAD
 	// Generate user ID
 	user.ID = generateUserID()
 
-	// Check if user already exists
-	filter := bson.M{"email": user.Email}
-	var result schema.User
-	err := collection.FindOne(ctx, filter).Decode(&result)
-	if err == nil {
-		return false, errors.New("user already exists")
-	} else if err != mongo.ErrNoDocuments { // If error is not "No Documents"
-		return false, err // Return error
-	} else {
-		_, err := collection.InsertOne(ctx, user) // Insert user to collection
-		if err != nil {
-			return false, err
-		}
+	// Prepare document to insert
+	doc := bson.M{
+		"id":       user.ID,
+		"email":    user.Email,
+		"password": user.Password, // consider hashing (bcrypt) before storing
 	}
 
-=======
-	// userDetails
-	userDetails := bson.M{
-		"username": user.Username,
-		"email":    user.Email,
-		"password": user.Password,
-	}
-	// Check email in database
-	filter := bson.M{"email": user.Email}
 	// Check if user already exists
-	var result schema.User
-	err := collection.FindOne(ctx, filter).Decode(&result)
-	if err != nil && err != mongo.ErrNoDocuments {
-		return false, err // Return error if not found
-	} else if err != nil {
-		return false, errors.New("email already exists") // Return error if email already exists
-	} else if result.Email == user.Email {
-		log.Println("User updated successfully.")
-		// Update the userDetails in the database
-		_, err := collection.UpdateOne(ctx, filter, bson.M{"$set": userDetails})
-		if err != nil {
-			return false, err // Return error if failed to update
-		}
+	filter := bson.M{"email": user.Email}
+	var existing schema.User
+	err := collection.FindOne(ctx, filter).Decode(&existing)
+	if err == nil {
+		// Found an existing user with same email
+		return false, errors.New("email already exists")
 	}
->>>>>>> Final_BN
+	if err != nil && err != mongo.ErrNoDocuments {
+		// Some unexpected DB error
+		return false, err
+	}
+
+	// Insert new user (no existing document)
+	_, err = collection.InsertOne(ctx, doc)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 

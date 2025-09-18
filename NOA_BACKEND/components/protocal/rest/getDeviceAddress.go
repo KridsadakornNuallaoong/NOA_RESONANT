@@ -8,17 +8,6 @@ import (
 )
 
 func HandleGetDeviceAddress(w http.ResponseWriter, r *http.Request) {
-<<<<<<< HEAD
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json") // Set the content type to JSON
-
-	// * get device address from database
-	deviceAddresses, err := db.GetDeviceAddress()
-=======
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -39,20 +28,13 @@ func HandleGetDeviceAddress(w http.ResponseWriter, r *http.Request) {
 
 	// ดึงข้อมูลอุปกรณ์จากฐานข้อมูล
 	devices, err := db.GetDeviceAddress(userID)
->>>>>>> Final_BN
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-<<<<<<< HEAD
-	// * send device addresses .json to client
-	response := map[string][]string{"deviceAddresses": deviceAddresses}
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-=======
 	// ส่งข้อมูลกลับในรูปแบบ JSON
 	if err := json.NewEncoder(w).Encode(devices); err != nil {
->>>>>>> Final_BN
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

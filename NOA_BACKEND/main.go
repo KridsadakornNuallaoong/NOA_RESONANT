@@ -11,10 +11,7 @@ import (
 	"GOLANG_SERVER/components/protocal/mosquitto"
 	"GOLANG_SERVER/components/protocal/rest"
 	"GOLANG_SERVER/components/protocal/ws"
-<<<<<<< HEAD
-=======
 	"GOLANG_SERVER/components/sensitive"
->>>>>>> Final_BN
 	"GOLANG_SERVER/components/user"
 )
 
@@ -39,26 +36,6 @@ func main() {
 		fmt.Println("Message:", env.GetEnv("MESSAGE"))
 
 		//TODO REST API route
-<<<<<<< HEAD
-		go http.HandleFunc("/", rest.HandleAPI)                                                  //*[DONE] API route
-		go http.HandleFunc("/data", rest.HandleGetAllData)                                       //*[DONE] Get all data
-		go http.HandleFunc("/store", rest.HandleStore)                                           //*[DONE] Store data
-		go http.HandleFunc("/latest", rest.HandleGetLatestData)                                  //*[DONE] Get latest data
-		go http.HandleFunc("/clean", rest.HandleCleanData)                                       //*[DONE] Clean data
-		go http.HandleFunc("/registerdevice", rest.HandleRegisterDevice)                         //*[DONE] Register device
-		go http.HandleFunc("/deviceaddresses", rest.HandleGetDeviceAddress)                      //*[DONE] Get device address
-		go http.HandleFunc("/checkdeviceaddresses/", rest.HandleGetDeviceAddressByDeviceAddress) //*[DONE] Get device address by device address
-		go http.HandleFunc("/data/", rest.HandleGetAllDataByDeviceAddress)                       //*[DONE] Get data use param
-		go http.HandleFunc("/register", user.Register)                                           //*[DONE] Register user by Enail and Password
-		go http.HandleFunc("/login", user.Login)                                                 //*[DONE] login user by Email and Password
-		go http.HandleFunc("/sendotp", user.SendOTP)                                             //*[DONE] Send OTP to Email
-		go http.HandleFunc("/forgotpassword", user.ForgotPasswordReq)                            //*[DONE] Forgot Password
-		go http.HandleFunc("/verifyotp", user.VerifyOTP)                                         //*[DONE] Verify OTP
-
-		//TODO--------------------------------------------------------------------------------------------------------------------------||
-		//go http.HandleFunc("/authendevice", sensitive.AuthenDevice) //!Sensitive Authenticate device
-		//go http.HandleFunc("/verifydevice", sensitive.VerifyDevice) //!Sensitive Verify device
-=======
 
 		//go http.HandleFunc("/", rest.HandleAPI)                 //*[DONE] API route
 		//go http.HandleFunc("/latest", rest.HandleGetLatestData) //*[DONE] Get latest data
@@ -83,26 +60,10 @@ func main() {
 
 		//TODO--------------------------------------------------------------------------------------------------------------------------||
 
->>>>>>> Final_BN
 		//go http.HandleFunc("/newpassword", user.ChangePassword)						  		 //TODO Change Password
 		//go http.HandleFunc("/logout", user.Logout)							  				 //TODO Logout
 		//go http.HandleFunc("/downloaddata")												  	 //?[Design] Download data as CSV or JSON file
 		//go http.HandleFunc("/payment")												  		 //?[Design] Payment route
-<<<<<<< HEAD
-		//go http.HandleFunc("/notification")													 //?[Design] Notification route
-		//go http.HandleFunc("/userprofile")													 //?[Design] User profile route
-		//go http.HandleFunc("/userprofile/update")												 //?[Design] Update user profile route
-		//go http.HandleFunc("/getprediction")													 //?[Design] Get prediction route
-		//go http.HandleFunc("/prediction")														 //?[Design] Prediction route
-		//TODO--------------------------------------------------------------------------------------------------------------------------||
-
-		// TODO: WebSocket route
-		http.HandleFunc("/ws", ws.HandleWebSocket) //*DONE Handle WebSocket connection
-
-		go http.HandleFunc("/ws/test", ws.HandleWsTest)
-		// TODO: Start MQTT client
-		go mosquitto.HandleMQTT()
-=======
 		//go http.HandleFunc("/userprofile")													 //?[Design] User profile route
 
 		//TODO--------------------------------------------------------------------------------------------------------------------------||
@@ -121,7 +82,6 @@ func main() {
 		//go mosquitto.HandleWebSocketMerge()
 
 		//TODO--------------------------------------------------------------------------------------------------------------------------||
->>>>>>> Final_BN
 
 		// TODO: Start the server in a goroutine
 		go func() {
