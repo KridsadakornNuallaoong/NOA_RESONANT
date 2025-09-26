@@ -28,7 +28,7 @@ T parseRes(unsigned char lowByte, unsigned char highByte) {
 #define MQTT_MAX_SIZE 1024
 
 <<<<<<< HEAD
-const char* Rest_ip = "104.214.174.39:8000";
+const char* Rest_ip = "localhost:8000";
 
 =======
 >>>>>>> Final_BN
