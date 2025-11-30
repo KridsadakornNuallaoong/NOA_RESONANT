@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+  .flex-1,
+    .flex-2 {
+        width: 100%;
+    }
+}
